@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lectura de Mente</title>
+    <link rel="stylesheet" href="estilos.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap">
+    <style>
+        /* Aplicar la tipografía futurista a todo el cuerpo de la página */
+        body {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* Estilo para el nuevo título */
+        .sub-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: lime;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Agregar la etiqueta <audio> sin controles para ocultar la barra de reproducción -->
+    <audio id="backgroundMusic" loop>
+        <source src="musica-fondo.mp3" type="audio/mpeg">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
+
+    <div class="container">
+        <h1>Mortis Applications</h1>
+        <h2 class="sub-title">Lector de Mentes</h2>
+        <div id="initialSection">
+            <label for="number">Piensa en un número del 1 al 10:</label>
+            <br>
+            <input type="text" id="number" maxlength="2">
+            <br>
+            <button onclick="startAnalysis()">Leer mente</button>
+            <p id="error-message" style="display:none;"></p>
+        </div>
+        <div id="progressSection" style="display:none;">
+            <div class="progress-bar">
+                <div class="progress-bar-fill" id="progressBar"></div>
+            </div>
+            <p id="progressLabel"></p>
+        </div>
+        <p id="result" style="display:none;"></p>
+        <button id="resetButton" style="display:none;" onclick="reset()">Ingresar otro número</button>
+    </div>
+    <footer>Mortis Applications ®</footer>
+
+    <script>
+        // Función para reproducir la música
+        function playMusic() {
+            const music = document.getElementById('backgroundMusic');
+            music.play().catch(error => {
+                console.log('Error al intentar reproducir música: ', error);
+            });
+        }
+
+        // Función para iniciar el análisis y reproducir la música
+        function startAnalysis() {
+            const number = document.getElementById('number').value;
+            const errorMessage = document.getElementById('error-message');
+            
+            if (!number || isNaN(number) || number < 1 || number > 10) {
+                errorMessage.innerText = "Por favor, ingresa un número válido entre 1 y 10.";
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            // Reproducir música al iniciar el análisis
+            playMusic();
+
+            // Ocultar la sección inicial y mostrar la barra de progreso
+            document.getElementById('initialSection').style.display = 'none';
+            document.getElementById('progressSection').style.display = 'block';
+
+            errorMessage.style.display = 'none'; // Oculta el mensaje de error
+            document.getElementById('progressLabel').innerText = analysisMessages[0];
+            progressValue = 0;
+            document.getElementById('progressBar').style.width = '0%';
+            incrementProgress(number);
+        }
+
+        function incrementProgress(number) {
+            if (progressValue < 100) {
+                if (progressValue % 20 === 0) {
+                    document.getElementById('progressLabel').innerText = analysisMessages[progressValue / 20];
+                }
+                progressValue += 2; // Aumentar la barra de progreso en pasos más pequeños
+                document.getElementById('progressBar').style.width = progressValue + '%';
+                setTimeout(() => incrementProgress(number), 750); // Ajustar el tiempo para completar en 15 segundos
+            } else {
+                showResult(number);
+            }
+        }
+
+        function showResult(number) {
+            document.getElementById('progressSection').style.display = 'none';
+            document.getElementById('result').innerText = `El número que pensaste es: ${number}`;
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('resetButton').style.display = 'block'; // Muestra el botón de reinicio
+        }
+
+        function reset() {
+            // Mostrar la sección inicial y ocultar el resultado y el botón de reinicio
+            document.getElementById('initialSection').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('resetButton').style.display = 'none';
+        }
+
+        let progressValue = 0;
+        const analysisMessages = [
+            "Leyendo pensamientos...",
+            "Interpretando señales cerebrales...",
+            "Desencriptando ondas mentales...",
+            "Detectando patrones de pensamiento...",
+            "Casi listo...",
+            "Preparando la revelación...",
+            "Analizando datos...",
+            "Completando análisis...",
+            "Listo para mostrar el resultado..."
+        ];
+    </script>
+</body>
+</html>
